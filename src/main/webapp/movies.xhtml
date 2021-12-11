@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:sec="http://www.springframework.org/security/tags">
+<ui:composition template="layout.xhtml">
+	<ui:define name="content">
+		<h:form id="movieForm">
+			<p:panel header="Movie Info" id="movieInfoPanel">
+				<h:panelGrid columns="2">
+					<p:outputLabel for="title" value="Movie Title: " />
+					<p:inputText id="title" size="40"
+						value="#{movieController.movieUITO.title}" required="true"
+						requiredMessage="Please enter movie title " />
+					<p:outputLabel for="genre" value="Genre: " />
+					<p:inputText id="genre" size="40"
+						value="#{movieController.movieUITO.genre}" />
+					<p:outputLabel for="length" value="Movie length: " />
+					<p:inputText id="length" size="40"
+						value="#{movieController.movieUITO.length}" />
+
+
+					<h:commandButton value="#{movieController.actionLabel}"
+						action="#{movieController.saveMovie}">
+						<f:ajax execute="movieForm" render="movielist movieInfoPanel" />
+					</h:commandButton>
+				</h:panelGrid>
+			</p:panel>
+			<p:panel header="Movie List" id="movielist">
+				<p:dataTable id="table" var="movie"
+					value="#{movieController.movieUITOList}">
+					<p:column>
+						<f:facet name="header">Id</f:facet>
+						<h:outputText value="#{movie.id}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">Title</f:facet>
+						<h:outputText value="#{movie.title}" />
+					</p:column>
+					<p:column>
+						<f:facet name="header">Genre</f:facet>
+						<h:outputText value="#{movie.genre}">
+						</h:outputText>
+					</p:column>
+					<p:column>
+						<f:facet name="header">Length</f:facet>
+						<h:outputText value="#{movie.length}">
+						</h:outputText>
+					</p:column>
+					<p:column id="action">
+						<f:facet name="header">Action</f:facet>
+						<h:commandLink value="Edit"
+							action="#{movieController.editMovie(movie)}">
+							<f:ajax execute="action" render="movieForm" />
+						</h:commandLink> /
+						  <sec:authorize access="hasRole('ROLE_ADMIN')">
+							<h:commandLink value="Delete"
+								action="#{movieController.deleteMovie(movie)}">
+								<f:ajax execute="action" render="table" />
+							</h:commandLink>
+						</sec:authorize>
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</html>
